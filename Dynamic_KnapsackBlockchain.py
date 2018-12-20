@@ -1,4 +1,4 @@
-# A Dynamic Programming based Python Program for 0-1 Knapsack problem
+# A Dynamic Programming based Python Program for the Knapsack Blockchain problem
 # Returns the maximum value that can be put in a Block of capacity 1mb
 
 import time
