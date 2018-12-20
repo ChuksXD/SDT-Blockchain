@@ -1,12 +1,13 @@
 from numpy import *
 import time
 from datetime import timedelta
+# create a class for the transactions
 class Item:
     def __init__(self, value, weight):
         self.value = value
         self.weight = weight
 
-
+#create a class for the block
 class Knapsack:
     def __init__(self, capacity, items_list= []):
         self.capacity = capacity
@@ -19,7 +20,7 @@ class Knapsack:
 
     def can_fill(self, item):
         return self.current_weight() + item.weight <= self.capacity
-
+    #function to fill the knapsack(block) with transactions based on thier density
     def fill(self, items):
         items = sorted(items, key=lambda item: (item.value/item.weight), reverse=True)
         for item in items:
@@ -36,21 +37,20 @@ class Knapsack:
 def main():
     fee=[]
     size=[]
+    #extract neeeded values from mempool data
     with open('transactions.txt','r') as f:
         for line in f:
             fee.append(line.split(',')[8])
             size.append(line.split(',')[9])
 
     f.close()
-#divide each fee by 10000 to get value in usd
+    
     fee = [int(i) for i in fee]
     size = [int(i) for i in size]
 
 #define blocksize in terms of bytes
     Blocksize = 1000000
     No_of_items = len(fee)
-    #capacity, n = map(int, input().split())
-    capacity = 10
     bag = Knapsack(Blocksize)
 
     items = []
@@ -60,9 +60,10 @@ def main():
         items.append(
             Item(fee[x], size[x])
         )
-
+    #fill block
     bag.fill(items)
     total_value = bag.current_value
+    #divide by 10000 to get the value in USD
     value = float(total_value/10000)
     print('Number of items in the knapsack', bag.countitems())
     print('Total value from transactions in block is ', value, 'dollars')
