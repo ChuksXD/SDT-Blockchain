@@ -1,7 +1,9 @@
+#Pure online greedy knapsack algorithm for the blockchain transactions 
 from numpy import *
 import time
-from datetime import timedelta
+#A variable that holds the total capacity of the block at a given time
 global totalW
+#Create a class for the transactions
 class item:
     def __init__(self,id,v,w):
         self.id = id
@@ -19,7 +21,7 @@ class item:
                + str(self.weight) + '>'
 
 
-
+#Online knapsack greedy funnction that processes each transaction sequentially without knowing the future transactions
 def greedy(item, maxWeight,total,knapsack):
     global totalW
     totalW= total
@@ -32,7 +34,7 @@ def greedy(item, maxWeight,total,knapsack):
         return knapsack
     else:
         return None
-
+#function that creates each transaction object and sends each one to the greedy function
 def calc(count,n):
     for x in range(n):
 
@@ -40,8 +42,9 @@ def calc(count,n):
         greedy(newitem,Blocksize,totalW,knapsack)
 
         count+=1
-
+#start timing of driver program
 start_time = time.time()
+#Extract needed values from mempool data
 id = []
 fee=[]
 size=[]
@@ -55,6 +58,7 @@ f.close()
 #divide each fee by 10000 to get value in usd
 fee = [float(i)/10000 for i in fee]
 size = [float(i) for i in size]
+#create a block(knapsack array)
 knapsack =[]
 #define blocksize in terms of bytes
 Blocksize = 1000000
@@ -65,6 +69,7 @@ calc(count,No_of_items)
 knapsack[:] = [item for item in knapsack if item is not None]
 Knapsack_size = len(knapsack)
 sum =0
+#get total value of all transactions in the block
 for x in range(0,Knapsack_size):
     sum+=knapsack[x].getValue()
 print("Total value from transactions in block is ", sum, ' dollars')
