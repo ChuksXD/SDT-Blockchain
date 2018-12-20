@@ -1,7 +1,9 @@
+'''An  online advice model for the knapsack blockchain problem that is given the value from the offline optimal algorithm
+(knapsackoffline) as advice and uses it as the optimal solution'''
 import time
-from datetime import timedelta
-from numpy import *
+#A variable that holds the total capacity of the block at a given time
 global totalW
+#Create a class for the transactions
 class item:
     def __init__(self,id,v,w):
         self.id = id
@@ -19,7 +21,7 @@ class item:
                + str(self.weight) + '>'
 
 
-
+#online greedy function with advice value of optimal solution
 def greedy(item, maxWeight,total,knapsack,p):
     global totalW
     totalW= total
@@ -34,7 +36,7 @@ def greedy(item, maxWeight,total,knapsack,p):
             return None
     elif p< Advice_function:
         return None
-
+#function that creates each transaction object and sends each one to the greedy function
 def calc(count,n):
     for x in range(n):
 
@@ -44,8 +46,9 @@ def calc(count,n):
         greedy(newitem,Blocksize,totalW,knapsack,profit_density)
 
         count+=1
-
+#start timing of driver program
 start_time = time.time()
+#Extract needed values from mempool data
 id = []
 fee=[]
 size=[]
@@ -59,17 +62,24 @@ f.close()
 #divide each fee by 10000 to get value in usd
 fee = [int(i) for i in fee]
 size = [int(i) for i in size]
+#create a block(knapsack)
 knapsack =[]
 #define blocksize in terms of bytes
 Blocksize = 1000000
 No_of_items = len(fee)
 totalW = 0
 count = 0
-Advice_function =10.338212
+#advice bit from offline algorithm (Note that our optimal solution was divided by 10000 to get the value in USD)
+optimal_solution = 2033.8212
+'''Calculate advice function using the density (total value obtained / total size of block in bytes which is 1000000).
+The total value has to be multiplied by 10000 before the division is done'''
+total_value = optimal_solution * 10000
+Advice_function = total_value/1000000
 
 calc(count,No_of_items)
 knapsack[:] = [item for item in knapsack if item is not None]
 Knapsack_size = len(knapsack)
+#get total value of all transactions in the block
 sum =0
 for x in range(0,Knapsack_size):
     sum+=knapsack[x].getValue()
