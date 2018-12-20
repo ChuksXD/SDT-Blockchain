@@ -1,6 +1,7 @@
+''' Offline knapsack algorithm for the blockchain that orders all transactions in the mempool according to thier density value 
+(in descending order) and then performs a greedy process''' 
 from numpy import *
 import time
-from datetime import timedelta
 # create a class for the transactions
 class Item:
     def __init__(self, value, weight):
@@ -20,7 +21,7 @@ class Knapsack:
 
     def can_fill(self, item):
         return self.current_weight() + item.weight <= self.capacity
-    #function to fill the knapsack(block) with transactions based on thier density
+    #function to fill the knapsack(block) with transactions based on thier density value
     def fill(self, items):
         items = sorted(items, key=lambda item: (item.value/item.weight), reverse=True)
         for item in items:
