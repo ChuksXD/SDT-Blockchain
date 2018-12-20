@@ -1,6 +1,8 @@
 # BlockchainKnapsack
-Experimental analysis of weighted knapsack algorithms for transaction selection in blockchain technology
+Experimental analysis of weighted knapsack algorithms for transaction selection in blockchain technology.
+
 The algorithms are as follows:
+
 Dynamic_KnapsackBlockchain: Implementation of an offline knapsack algorithm that uses dynamic programming on the transactions in the 
 mempool to fill in a block.
 
@@ -14,4 +16,6 @@ KnapsackBlockchainwithadvice: Implementation of an online advice model that is g
 case KnapsackOffline) in order to improve its value by comparing the density of each transaction to the total density of the block formed
 in the offline algorithm.
 
-Transaction.txt: Mempool data (for November 2018) in text format obtained from blockchair.com.
+Transaction.txt: Mempool data (for November 2018) in text format obtained from blockchair.com/bitcoin. The data is arranged thus 
+#BlockId, #Hash, #date&time, #input_count, #output_count, #output_total(in BTC), #Output_total(in USD),  #Output_fee(in BTC), 
+#Output_fee * 10000(in USD), #Size (in bytes)
