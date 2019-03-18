@@ -1,13 +1,27 @@
 ''' Offline knapsack algorithm for the blockchain that orders all transactions in the mempool according to thier density value 
 (in descending order) and then performs a greedy process''' 
-from numpy import *
+import numpy 
 import time
+from binary_heap import MaxHeap
+
 # create a class for the transactions
 class Item:
     def __init__(self, value, weight):
-        self.value = value
-        self.weight = weight
-
+        self.value = float(value)
+        self.weight = float(weight)
+    def __repr__(self):
+        return str(self.value + self.weight)
+    def __eq__(self, other):
+        return ((self.value/self.weight) == (other.value/ other.weight))
+    def __lt__(self, other):
+        return ((self.value/self.weight) < (other.value/ other.weight))
+    def __le__(self, other):
+        return ((self.value/self.weight) <= (other.value/ other.weight))
+    def __gt__(self, other):
+        return ((self.value/self.weight) > (other.value/ other.weight))
+    def __ge__(self, other):
+        return ((self.value/self.weight) >= (other.value/ other.weight))
+    
 #create a class for the block
 class Knapsack:
     def __init__(self, capacity, items_list= []):
@@ -33,36 +47,40 @@ class Knapsack:
         return self.items_no
     def __repr__(self):
         return str(self.current_value)
+    def fillh (self, max_heap):
+        #add a function that limit the algorithm to check the whole list.
+        #max_heap = MaxHeap(items)
+        for x in range(len(max_heap.elements())):
+            item = max_heap.get_root_value()
+            if self.can_fill(item):
+                self.items_list.append(item)
+                self.current_value += item.value
+                self.items_no+=1
+                max_heap.extract_root()
 
 
 def main():
     fee=[]
     size=[]
     #extract neeeded values from mempool data
+    max_heap = MaxHeap()    
     with open('transactions.txt','r') as f:
         for line in f:
-            fee.append(line.split(',')[8])
-            size.append(line.split(',')[9])
+            values  = line.split(',')
+            max_heap.add_element(Item(values[8],values[9]))                        
 
-    f.close()
-    
-    fee = [int(i) for i in fee]
-    size = [int(i) for i in size]
+    f.close()    
 
 #define blocksize in terms of bytes
     Blocksize = 1000000
     No_of_items = len(fee)
     bag = Knapsack(Blocksize)
 
-    items = []
+    items = max_heap.elements()   
 
-    for x in range(No_of_items):
-
-        items.append(
-            Item(fee[x], size[x])
-        )
     #fill block
-    bag.fill(items)
+    #bag.fill(items)
+    bag.fillh(max_heap)
     total_value = bag.current_value
     #divide by 10000 to get the value in USD
     value = float(total_value/10000)
