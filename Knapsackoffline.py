@@ -29,12 +29,10 @@ class Knapsack:
         self.items_list = items_list
         self.current_value = 0
         self.items_no = 0
-
-    def current_weight(self):
-        return sum(item.weight for item in self.items_list)
+        self.current_weight = 0    
 
     def can_fill(self, item):
-        return self.current_weight() + item.weight <= self.capacity
+        return self.current_weight + item.weight <= self.capacity
     #function to fill the knapsack(block) with transactions based on thier density value
     def fill(self, items):
         items = sorted(items, key=lambda item: (item.value/item.weight), reverse=True)
@@ -50,14 +48,21 @@ class Knapsack:
     def fillh (self, max_heap):
         #add a function that limit the algorithm to check the whole list.
         #max_heap = MaxHeap(items)
+        lastFewTxs = 0
         for x in range(len(max_heap.elements())):
             item = max_heap.get_root_value()
             if self.can_fill(item):
                 self.items_list.append(item)
                 self.current_value += item.value
+                self.current_weight += item.weight
                 self.items_no+=1
-                max_heap.extract_root()
-
+                max_heap.extract_root()                
+            elif self.current_weight > self.capacity -100 or lastFewTxs > 50:
+                break
+            if self.current_weight > self.capacity - 1000:
+                lastFewTxs += 1
+                
+            
 
 def main():
     fee=[]

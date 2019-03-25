@@ -19,3 +19,6 @@ in the offline algorithm.
 Transactions.txt: Mempool data (for November 2018) in text format obtained from blockchair.com/bitcoin. The data is arranged thus 
 #BlockId, #Hash, #date&time, #input_count, #output_count, #output_total(in BTC), #Output_total(in USD),  #Output_fee(in BTC), 
 #Output_fee * 10000(in USD), #Size (in bytes)
+
+
+Heap was implemented using the following library. https://pypi.org/project/binary-heap/

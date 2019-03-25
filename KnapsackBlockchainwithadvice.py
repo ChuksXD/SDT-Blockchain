@@ -88,8 +88,8 @@ print('Total number of items included in knapsack is ', Knapsack_size)
 print('Total number of items available is ', No_of_items)
 print('items included are as follows')
 print('<id,value,weight>')
-for x in knapsack:
-    print(' ',x)
+#for x in knapsack:
+#    print(' ',x)
 
 
 
