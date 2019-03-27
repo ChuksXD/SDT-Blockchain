@@ -69,9 +69,23 @@ def SDT(k1,k2):
 
 
 
-fees = [200,300,150,180,170,700,200,900,450,250]
-sizes = [15,15,10,12,20,25,10,25,30,13]
-Blocksize=75
+fees=[]
+sizes=[]
+with open('transactions.txt','r') as f:
+    for line in f:
+        fee.append(line.split(',')[8])
+        size.append(line.split(',')[9])
+
+f.close()
+#divide each fee by 10000 to get value in usd
+fee = [float(i)/10000 for i in fee]
+size = [float(i) for i in size]
+knapsack =[]
+#define blocksize in terms of bytes
+Blocksize = 1000000
+No_of_items = len(fee)
+
+
 P=29.33
 key_count =1;
 items=[]
@@ -80,9 +94,7 @@ for x in range(len(fees)):
     items.append(item(key_count,fees[x],sizes[x]))
     key_count+=1
 SDT(50,50)
-for x in B:
-    print(x.value)
-exit(-1)
+
 
 
 
