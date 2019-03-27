@@ -2,6 +2,9 @@
 from collections import  defaultdict
 import math
 import time
+import datetime
+from dateutil.parser import parse
+
 ''' Item class that represent each transaction'''
 class Item:    
     def __init__(self,k,v,w):
@@ -32,7 +35,7 @@ class Block:
         result = False
         if isinstance(item, Item):
             self.transactions.append(item)
-            self.fee += item.value/10000 # in order to converter the value to dollars
+            self.fee += item.value /10000# in order to converter the value to dollars
             self.count +=1
             self.size += item.weight
             result = True
@@ -52,8 +55,11 @@ class Block:
     
     
 
-"""Algorithm to fill the blocks with transactions."""
+"""Algorithm to fill the blocks with transactions. It is based on a matrix of size by densite. Each classe is represented by one index of this matrix."""
 class SDT:
+    '''
+    Method to initialize the class with upperbounds and 
+    '''
     def __init__(self,sizeClass, densityClass,sizeLimit,DensitUpper):
         # have different inputs for X and Y (2 dif classes)
         self.sizeClassLimit = sizeClass
@@ -62,11 +68,15 @@ class SDT:
         self.densityUpper = DensitUpper
         self.table = [[[] for x in range(self.densityClassLimit)]for y in range(self.sizeClassLimit)]
         self.sizeTable = [[0 for x in range(self.densityClassLimit)]for y in range(self.sizeClassLimit)]
-
+        self.count = 0
+    '''
+    Method responsible for add transaction into the right classes.
+    '''
     def add(self, item):
+        self.count +=1
         density = item.value/item.weight
         densityScaled = density/self.densityUpper
-        sizeClass = math.floor((item.weight/self.sizeLimit)%self.sizeClassLimit)
+        sizeClass = math.floor((item.weight/self.sizeLimit)%self.sizeClassLimit)        
         if densityScaled >= 1:
             self.table[sizeClass][self.densityClassLimit-1].append(item)            
             self.sizeTable[sizeClass][self.densityClassLimit-1] += item.weight
@@ -75,8 +85,36 @@ class SDT:
             self.table[sizeClass][densityClass].append(item)
             self.sizeTable[sizeClass][densityClass] += item.weight
         return
-        
+    
+    def addLog(self,item,logbase):
+        self.count +=1
+        density = item.value/item.weight
+        if density >0:
+            densityScaledReversed = self.densityUpper/density
+        else:
+            densityScaledReversed = 1000000
+        sizeScaledReversed = self.sizeLimit/item.weight            
+        sizeClass = self.sizeClassLimit - math.floor(math.log(sizeScaledReversed,logbase)) -1
+        if sizeClass < 0:
+            sizeClass = 0
+        if sizeScaledReversed <=1:
+            sizeClass = self.sizeClassLimit -1
+        #print(sizeClass)
+        if densityScaledReversed <= 1:
+            self.table[sizeClass][self.densityClassLimit-1].append(item)            
+            self.sizeTable[sizeClass][self.densityClassLimit-1] += item.weight
+        else:
+            densityClass = self.densityClassLimit - math.floor(math.log(densityScaledReversed,logbase))-2
+            if densityClass < 0 :
+                densityClass = 0            
+            self.table[sizeClass][densityClass].append(item)
+            self.sizeTable[sizeClass][densityClass] += item.weight
+        return
+    '''  
+    Method responsible for create a block with the better profit possible.
+    '''    
     def fill(self, blockLimit):
+        print(self.count)
         block = Block()        
         cap = blockLimit- block.size
         terminated = False
@@ -118,6 +156,7 @@ class SDT:
         return block
 
     def fill1(self, blockLimit):
+        print(self.count)
         block = Block()        
         cap = blockLimit- block.size
         terminated = False
@@ -166,10 +205,7 @@ class SDT:
                     block.add(x)
                     selected = True
                 else:
-                    i -= 1
-            
-
-            
+                    i -= 1                       
             if not selected:
                 j -= 1
             else:
@@ -186,27 +222,41 @@ class SDT:
             print()
 
 def main ():
-    sdt = SDT(1, 1000,1000,40)
-    with open('transactions.txt','r') as f:
+    """
+    Tdatetime = "2017-11-06 00:00:00"
+    #initial = datetime.datetime.strptime(Tdatetime,'%Y-%m-%d %H:%M:%S')
+    nextblock = datetime.timedelta(minutes=10)
+    initial = parse(Tdatetime) + nextblock
+    sdt = SDT(25, 25,1000,0.1)
+    count = 0
+    with open('transactions061117.txt','r') as f:
         for line in f:
-            sdt.add(Item(line.split(',')[1],line.split(',')[8],line.split(',')[9]))
-    
-    #sdt.print()
-    mined = sdt.fill1(1000000) # Block size
-    mined.print()
-    #sdt.print()
+            fields = line.split(',')
+            timeStamp = parse(fields[0])
+            if timeStamp < initial:
+                #sdt.addLog(Item(line.split(',')[0],line.split(',')[1],line.split(',')[2]),1.2)
+                sdt.add(Item(fields[0],fields[1],fields[2]))
+            else:
+                initial += nextblock
+                count +=1
+                print(count)
+                sdt.print()
+                mined = sdt.fill1(1000000) # Block size
+                mined.print()
+                #sdt.print()
+                
 """
-    sdt = SDT(25,1000,40)
+    sdt = SDT(10,10,1000,40)
     with open('transactions.txt','r') as f:
         for line in f:
-            sdt.add(Item(line.split(',')[1],line.split(',')[8],line.split(',')[9]))
+            sdt.addLog(Item(line.split(',')[1],line.split(',')[8],line.split(',')[9]),1.2)
     
-    #sdt.print()
+    sdt.print()
     mined = sdt.fill1(1000000)
     mined.print()
-    #sdt.print()
+    sdt.print()
     f.close() 
-"""
+
 
 if __name__ == "__main__":
     start_time = time.time()

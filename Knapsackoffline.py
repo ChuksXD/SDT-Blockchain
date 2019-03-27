@@ -40,15 +40,21 @@ class Knapsack:
             if self.can_fill(item):
                 self.items_list.append(item)
                 self.current_value += item.value
+                self.current_weight += item.weight
                 self.items_no+=1
     def countitems(self):
         return self.items_no
     def __repr__(self):
         return str(self.current_value)
+    def print(self):
+        print("Size = ", self.current_weight)
+        print("Value = ", self.current_value/10000)
+        print("Total = ", self.items_no)
+
     def fillh (self, max_heap):
         #add a function that limit the algorithm to check the whole list.
         #max_heap = MaxHeap(items)
-        lastFewTxs = 0
+        lastFewTxs = 0        
         for x in range(len(max_heap.elements())):
             item = max_heap.get_root_value()
             if self.can_fill(item):
@@ -56,12 +62,13 @@ class Knapsack:
                 self.current_value += item.value
                 self.current_weight += item.weight
                 self.items_no+=1
-                max_heap.extract_root()                
+                max_heap.extract_root()            
+                
             elif self.current_weight > self.capacity -100 or lastFewTxs > 50:
                 break
             if self.current_weight > self.capacity - 1000:
                 lastFewTxs += 1
-                
+         
             
 
 def main():
@@ -72,6 +79,7 @@ def main():
     with open('transactions.txt','r') as f:
         for line in f:
             values  = line.split(',')
+            #max_heap.add_element(Item(values[1],values[2]))                        
             max_heap.add_element(Item(values[8],values[9]))                        
 
     f.close()    
@@ -86,11 +94,7 @@ def main():
     #fill block
     #bag.fill(items)
     bag.fillh(max_heap)
-    total_value = bag.current_value
-    #divide by 10000 to get the value in USD
-    value = float(total_value/10000)
-    print('Number of items in the knapsack', bag.countitems())
-    print('Total value from transactions in block is ', value, 'dollars')
+    bag.print()
 
 
 if __name__ == "__main__":
