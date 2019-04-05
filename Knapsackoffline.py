@@ -72,8 +72,7 @@ class Knapsack:
             
 
 def main():
-    fee=[]
-    size=[]
+    fee=[]    
     #extract neeeded values from mempool data
     max_heap = MaxHeap()    
     with open('transactions.txt','r') as f:
