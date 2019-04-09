@@ -201,7 +201,7 @@ class SDT:
                     terminated = True                     
         return block
 
-    def fill1(self, blockLimit):
+    def fillOpt(self, blockLimit):
         #print(self.count)
         block = Block()        
         cap = blockLimit- block.size
@@ -257,7 +257,7 @@ class SDT:
                 j -= 1
             else:
                 cap = blockLimit - block.size                
-                if cap == 0 :
+                if cap <= 100 :
                     terminated = True                     
         return block
     
@@ -380,12 +380,13 @@ class Greed:
             if block.size > capacity - 1000:
                 lastFewTxs += 1
         return block
+
     def fillAdvice(self,capacity, advice):
         block = Block()
         cap = capacity - block.size
         lastFewTxs = 0        
         for item in self.memPool:            
-            if item.weight <= cap and item.fee >= advice:
+            if item.weight <= cap and (item.value/item.weight) >= advice:
                 block.add(item)     
                 cap -= item.weight                    
             elif block.size > capacity -100 or lastFewTxs > 50:
@@ -395,7 +396,7 @@ class Greed:
         return block
 
 
-def main (opt):
+def main (opt,SDTParam):
     """
     Tdatetime = "2017-11-06 00:00:00"
     #initial = datetime.datetime.strptime(Tdatetime,'%Y-%m-%d %H:%M:%S')
@@ -419,77 +420,100 @@ def main (opt):
                 mined.print()
                 #sdt.print()                
     """
+    begin = time.time()
+    size = 1000
+    totalTime = 0
     container = None
-    if opt == 0 or opt == 1:
-        container = Greed()
-        #greedonly    
-    elif opt == 2:
-        container = Knapsack()
-    elif opt == 3:
-        container = SDT(170,170,1000.0,0.003)
-    else:
-        print("Invalid Argument")
-    capacity = 1000000    
-    with open('transactionsM2803.txt','r') as f:
-        for line in f:               
-            # item (value, weight)
-            container.add(Item(line.split(',')[0],line.split(',')[1],line.split(',')[2]))         
-    #start_time = time.time()
-    #container.print()
-    if opt == 1:
-        mined = container.fillAdvice(capacity,1)
-    else:
-        mined = container.fill(capacity)
-    f.close() 
-    return mined
+    for i in range(size):
+        if opt == 0 or opt == 1:
+            container = Greed()
+            #greedonly    
+        elif opt == 2:
+            container = Knapsack()
+        elif opt == 3:
+            container = SDT(SDTParam[0],SDTParam[1],SDTParam[2],SDTParam[3])
+        else:
+            print("Invalid Argument")
+        capacity = 1000000    
+        with open('transactionsM2803.txt','r') as f:
+            for line in f:               
+                # item (value, weight)
+                container.add(Item(line.split(',')[0],line.split(',')[1],line.split(',')[2]))         
+        f.close() 
+
+    #for i in range(size):
+        # make a copy of the dataset avoiding to read the file so many times.
+        
+        
+        start_time = time.time()
+        #container.print()
+        if opt == 1:
+            mined = container.fillAdvice(capacity,0.00139)
+        else:
+            mined = container.fill(capacity)
+        totalTime += time.time() - start_time
+        #mined.print()
+    print('Total time =', time.time() - begin, opt, end=' ')
+    return mined, totalTime/size
 
 def simulation (capacity):
     #SDT(100,100,1000.0,0.01)
-    sizeClass = 170
-    densitClass = 170
+    sizeClass = 100
+    densitClass = 100
     sizeUpper = 1000
-    densityUpper = 0.001
-    block = Block()
-    param = []
-    count = 0
-    for isize in range(10):
-        sizeClass += 0
-        densitClass = 170
-        for idensity in range(10):
-            densitClass += 0
-            sizeUpper = 1000
-            for isizeUpper in range(10):
-                sizeUpper += 0    
-                densityUpper = 170            
-                for idensityUpper in range(10):
-                    count +=1                                                
-                    densityUpper += 0.001
-                    sdt = SDT(sizeClass,densitClass,sizeUpper, densityUpper)    
-                    with open('transactionsM2803.txt','r') as f:
-                        for line in f:               
-                            # item (value, weight)
-                            sdt.add(Item(line.split(',')[0],line.split(',')[1],line.split(',')[2]))         
-                    #start_time = time.time()
-                    #container.print()
-                    mined = sdt.fill(capacity)
-                    f.close() 
-                    if mined.fee > block.fee:
-                        block = copy.deepcopy(mined)
-                        param = [sizeClass,densitClass,sizeUpper,densityUpper]
-                    print(count)
-    block.print()
-    print(param)
+    densityUpper = 0.0015
+    block = Block()      
+    size = 10
+    cumulativeTime = 0
+    result = None    
+    for y in range (4):                
+        for x in range(4):
+            SDTParam = [sizeClass,densitClass,sizeUpper,densityUpper]              
+            result, cumulativeTime = main(3, SDTParam)      
+            print(cumulativeTime/size, SDTParam, result.fee, result.count, result.size)                            
+            cumulativeTime = 0
+            densitClass +=100            
+        densitClass = 100
+        sizeClass += 100 
     return block
+
+def simulationGreed (capacity):
+    block = Block() 
+    best = 0
+    count = 0
+    advice = 0.00001        
+    for i in range(10000):
+        count += 1
+        greed = Greed()
+        with open('transactionsM2803.txt','r') as f:
+            for line in f:               
+                # item (value, weight)
+                greed.add(Item(line.split(',')[0],line.split(',')[1],line.split(',')[2]))         
+        mined = greed.fillAdvice(capacity,advice)        
+        if mined.fee > block.fee:
+            block = copy.deepcopy(mined)
+            best = advice
+            print(advice)
+        f.close() 
+        #print(count)
+        advice += 0.00001
+    block.print()
+    print('advice =', best)
+
 
 
 if __name__ == "__main__":
-
-    for x in range(1):
+    
+    #simulationGreed(1000000)    
+    
+    for i in range (3):        
+        cumulativeTime = 0  
         start_time = time.time()
-        result = main(3)
-        #result = simulation(1000000)
-    # time for the algorithm is computed and printed        
-        result.print()
-        print( time.time() - start_time)
-        
-        
+        result, cumulativeTime = main(i,[])
+            #result = simulation(1000000)
+            # time for the algorithm is computed and printed        
+            #result.print()
+            #print(x)            
+        print(cumulativeTime, [], result.fee, result.count, result.size)
+    
+    simulation(1000000)    
