@@ -100,11 +100,11 @@ class SDT:
     '''
     Method to initialize the class with upperbounds and 
     '''
-    def __init__(self,sizeClass, densityClass,sizeLimit,DensitUpper):
+    def __init__(self,sizeClass, densityClass,sizeUpper,DensitUpper):
         # have different inputs for X and Y (2 dif classes)
         self.sizeClassLimit = sizeClass
         self.densityClassLimit = densityClass
-        self.sizeLimit = sizeLimit
+        self.sizeUpper = sizeUpper
         self.densityUpper = DensitUpper
         self.table = [[[] for x in range(self.densityClassLimit)]for y in range(self.sizeClassLimit)]
         self.sizeTable = [[0 for x in range(self.densityClassLimit)]for y in range(self.sizeClassLimit)]
@@ -116,14 +116,18 @@ class SDT:
         self.count +=1
         density = item.value/item.weight
         densityScaled = density/self.densityUpper
-        sizeClass = math.floor((item.weight/self.sizeLimit)%self.sizeClassLimit)        
+        sizeScaled = item.weight/self.sizeUpper
         if densityScaled >= 1:
-            self.table[sizeClass][self.densityClassLimit-1].append(item)            
-            self.sizeTable[sizeClass][self.densityClassLimit-1] += item.weight
+            densityClass = self.densityClassLimit -1
         else:
-            densityClass = math.floor(densityScaled*self.densityClassLimit)
-            self.table[sizeClass][densityClass].append(item)
-            self.sizeTable[sizeClass][densityClass] += item.weight
+            densityClass = math.floor(densityScaled*(self.densityClassLimit-1))
+        if sizeScaled >=1 :
+            sizeClass = self.sizeClassLimit -1
+        else:
+            sizeClass = math.floor((item.weight/self.sizeUpper)*(self.sizeClassLimit-1))
+
+        self.table[sizeClass][densityClass].append(item)
+        self.sizeTable[sizeClass][densityClass] += item.weight
         return
     
     def addLog(self,item,logbase):
@@ -421,7 +425,7 @@ def main (opt,SDTParam):
                 #sdt.print()                
     """
     begin = time.time()
-    size = 1000
+    size = 10
     totalTime = 0
     container = None
     for i in range(size):
@@ -460,22 +464,34 @@ def simulation (capacity):
     #SDT(100,100,1000.0,0.01)
     sizeClass = 100
     densitClass = 100
-    sizeUpper = 1000
-    densityUpper = 0.0015
-    block = Block()      
+    sizeUpper = 95000
+    densityUpper = 0.0015         
     size = 10
     cumulativeTime = 0
-    result = None    
+    result = None 
+    best = Block()   
+    
     for y in range (4):                
         for x in range(4):
             SDTParam = [sizeClass,densitClass,sizeUpper,densityUpper]              
             result, cumulativeTime = main(3, SDTParam)      
-            print(cumulativeTime/size, SDTParam, result.fee, result.count, result.size)                            
+            print(cumulativeTime, SDTParam, result.fee, result.count, result.size)                            
             cumulativeTime = 0
             densitClass +=100            
         densitClass = 100
         sizeClass += 100 
-    return block
+    '''
+    for x in range(100):
+            SDTParam = [sizeClass,densitClass,sizeUpper,densityUpper]              
+            result, cumulativeTime = main(3, SDTParam)      
+            print(cumulativeTime/size, SDTParam, result.fee, result.count, result.size)                            
+            cumulativeTime = 0
+            if result.fee > best.fee:
+                best = copy.deepcopy(result)
+                best.print()
+            sizeUpper +=1000   
+    '''
+    return result
 
 def simulationGreed (capacity):
     block = Block() 
