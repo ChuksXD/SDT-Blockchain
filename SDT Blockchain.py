@@ -427,6 +427,7 @@ def main (opt,SDTParam):
     begin = time.time()
     size = 10
     totalTime = 0
+    simulationTTime = 0
     container = None
     for i in range(size):
         if opt == 0 or opt == 1:
@@ -439,6 +440,7 @@ def main (opt,SDTParam):
         else:
             print("Invalid Argument")
         capacity = 1000000    
+        startSimulationTime = time.time()
         with open('transactionsM2803.txt','r') as f:
             for line in f:               
                 # item (value, weight)
@@ -449,36 +451,34 @@ def main (opt,SDTParam):
         # make a copy of the dataset avoiding to read the file so many times.
         
         
-        start_time = time.time()
+        startTime = time.time()
         #container.print()
         if opt == 1:
             mined = container.fillAdvice(capacity,0.00139)
         else:
             mined = container.fill(capacity)
-        totalTime += time.time() - start_time
+        totalTime += time.time() - startTime
+        simulationTTime += time.time() - startSimulationTime
         #mined.print()
     print('Total time =', time.time() - begin, opt, end=' ')
-    return mined, totalTime/size
+    return mined, totalTime/size, simulationTTime
 
 def simulation (capacity):
     #SDT(100,100,1000.0,0.01)
     sizeClass = 100
     densitClass = 100
     sizeUpper = 95000
-    densityUpper = 0.0015         
-    size = 10
+    densityUpper = 0.0015             
     cumulativeTime = 0
     result = None 
     best = Block()   
-    
-    for y in range (4):                
-        for x in range(4):
-            SDTParam = [sizeClass,densitClass,sizeUpper,densityUpper]              
-            result, cumulativeTime = main(3, SDTParam)      
-            print(cumulativeTime, SDTParam, result.fee, result.count, result.size)                            
-            cumulativeTime = 0
-            densitClass +=100            
-        densitClass = 100
+    simulationTime = 0
+    for y in range (2):                        
+        SDTParam = [sizeClass,densitClass,sizeUpper,densityUpper]              
+        result, cumulativeTime, simulationTime = main(3, SDTParam)      
+        print(simulationTime, cumulativeTime, SDTParam, result.fee, result.count, result.size)                            
+        cumulativeTime = 0
+        densitClass +=100                    
         sizeClass += 100 
     '''
     for x in range(100):
@@ -524,12 +524,12 @@ if __name__ == "__main__":
     
     for i in range (3):        
         cumulativeTime = 0  
-        start_time = time.time()
-        result, cumulativeTime = main(i,[])
+        simulationTime = 0        
+        result, cumulativeTime , simulationTime= main(i,[])
             #result = simulation(1000000)
             # time for the algorithm is computed and printed        
             #result.print()
             #print(x)            
-        print(cumulativeTime, [], result.fee, result.count, result.size)
+        print(simulationTime,cumulativeTime, [], result.fee, result.count, result.size)
     
     simulation(1000000)    
