@@ -168,12 +168,10 @@ class SDT:
         block = Block()        
         cap = blockLimit- block.size
         terminated = False
-        j = self.densityClassLimit -1        
-        #lastFewTxs = 0
-        isSorted = False
+        j = self.densityClassLimit -1                 
         while not terminated and j >= 0:                     
             index = cap/blockLimit        #empty fraction of the block    
-            si = math.floor(index * (self.sizeClassLimit-1)) # class which cap belongs
+            si = math.ceil(index * (self.sizeClassLimit-1)) # class which cap belongs
             selected = False
             i = si -1 # any transaction at class I for sizes fits in the remaining capacity. While transaction in SI might fit or might not.
             
@@ -201,7 +199,7 @@ class SDT:
                 j -= 1
             else:
                 cap = blockLimit - block.size
-                if cap == 0 :
+                if cap == 100 :
                     terminated = True                     
         return block
 
@@ -425,7 +423,7 @@ def main (opt,SDTParam):
                 #sdt.print()                
     """
     begin = time.time()
-    size = 10
+    size = 1000
     totalTime = 0
     simulationTTime = 0
     container = None
