@@ -3,6 +3,7 @@ Comparing our proposed Size-Density table (SDT) strategy to different weighted k
 ## Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
+* [Chart results](#chart-results)
 * [Setup](#Setup)
 
 ## General Info
@@ -32,6 +33,15 @@ in the offline algorithm.
 These algorithms can be found separately in the sorting algorithms folder.
 
 The dataset used contained about 30,000 pending transactions that were in the Bitcoin mempool on 28th of March, 2019 at 5:04pm and was obtained from blockchair.com/bitcoin. It can be found in the transactions208.txt file.
+
+## Chart Results
+![Profit by Algorithm](/images/ProfitByAlg-page-001.jpg)
+Format: ![Alt Text](url)
+The total fee of transactions selected by each algorithm. Note that the greedy algorithms are absent because the figure is scaled to only show the high total-fees on the y-axis.
+
+![Profit vs Time block mined](/images/ProfitvsTimeBlockMined-page-001.jpg)
+Format: ![Alt Text](url)
+Average time to form a block based on a set of transaction already in the mempool data structure versus profit. The orange line indicates the total fee of the selected transactions.
 
 ## Technologies
 * Python 3.7
