@@ -1,4 +1,4 @@
-# BlockchainKnapsack - transaction selection mining algorithm using SDT 
+# SDTBlockchain - transaction selection mining algorithm using SDT 
 Comparing our proposed Size-Density table (SDT) strategy to different weighted knapsack algorithms for transaction selection from the mempool.
 ## Table of contents
 * [General info](#general-info)
@@ -26,4 +26,18 @@ that can fit the block.
 case KnapsackOffline) in order to improve its value by comparing the density of each transaction to the total density of the block formed
 in the offline algorithm.
 
-* Heap Sort: 
+* Heap Sort: An offline algorithm that uses heap-based strategy to sort the transactions. It was implemented using the following library. https://pypi.org/project/binary-heap/
+* SDT Blockchain: Implementation of our proposed size-density table based stategy.
+
+These algorithms can be found separately in the sorting algorithms folder.
+
+The dataset used contained about 30,000 pending transactions that were in the Bitcoin mempool on 28th of March, 2019 at 5:04pm and was obtained from blockchair.com/bitcoin. It can be found in the transactions208.txt file.
+
+# Technologies
+* Python 3.7
+* JSON
+
+# Setup
+Clone the repository and run the SDTBlockchain.py file (It contains all the algorithms used in the comparison as well as SDT). Make sure you set transactions file to the transactions you want test
+
+
