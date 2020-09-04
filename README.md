@@ -5,7 +5,7 @@ Comparing our proposed Size-Density table (SDT) strategy to different weighted k
 * [Technologies](#technologies)
 * [Setup](#Setup)
 
-## General info
+## GENERAL INFO
 We introduce a data structure, SDT that outperforms the widely used transaction selection mining algorithms such as heap-based sorting. It improves performance by supporting insertion & deletion in constant time
 and more importantly forms a block without the need to sort transactions.
 
