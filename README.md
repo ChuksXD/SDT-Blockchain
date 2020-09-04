@@ -5,7 +5,7 @@ Comparing our proposed Size-Density table (SDT) strategy to different weighted k
 * [Technologies](#technologies)
 * [Setup](#Setup)
 
-## GENERAL INFO
+## General Info
 We introduce a data structure, SDT that outperforms the widely used transaction selection mining algorithms such as heap-based sorting. It improves performance by supporting insertion & deletion in constant time
 and more importantly forms a block without the need to sort transactions.
 
@@ -33,11 +33,11 @@ These algorithms can be found separately in the sorting algorithms folder.
 
 The dataset used contained about 30,000 pending transactions that were in the Bitcoin mempool on 28th of March, 2019 at 5:04pm and was obtained from blockchair.com/bitcoin. It can be found in the transactions208.txt file.
 
-# Technologies
+## Technologies
 * Python 3.7
 * JSON
 
-# Setup
+## Setup
 Clone the repository and execute the SDT Blockchain.py file (It contains all the algorithms used in the comparison as well as SDT). Make sure you set transactions file to the TransactionM2803.txt or your own transactions file with the structure #DTC,#Output_fee * 10000(in USD), #Size (in bytes).
 
 To test the algorithms separately, go to the sorting algorithms folder and execute any of the .py files. To use your own date structure it in this format:
