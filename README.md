@@ -38,7 +38,7 @@ The dataset used contained about 30,000 pending transactions that were in the Bi
 
 <img src="/images/ProfitByAlg-page-001.jpg" alt="Profit by Algorithm" width="70%" height="70%">
 <strong>The total fee of transactions selected by each algorithm. Note that the greedy algorithms are absent because the figure is scaled to only show the high total-fees on the y-axis.</strong>
-
+<hr>
 
 <img src="/images/ProfitvsTimeBlockMined-page-001.jpg" alt="Profit vs Time block mined" width="70%" height="70%">
 <strong>Average time to form a block based on a set of transaction already in the mempool data structure versus profit. The orange line indicates the total fee of the selected transactions.</strong>
