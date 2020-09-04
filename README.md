@@ -38,7 +38,7 @@ The dataset used contained about 30,000 pending transactions that were in the Bi
 * JSON
 
 # Setup
-Clone the repository and execute the SDTBlockchain.py file (It contains all the algorithms used in the comparison as well as SDT). Make sure you set transactions file to the TransactionM2803.txt or your own transactions file with the structure #DTC,#Output_fee * 10000(in USD), #Size (in bytes).
+Clone the repository and execute the SDT Blockchain.py file (It contains all the algorithms used in the comparison as well as SDT). Make sure you set transactions file to the TransactionM2803.txt or your own transactions file with the structure #DTC,#Output_fee * 10000(in USD), #Size (in bytes).
 
 To test the algorithms separately, go to the sorting algorithms folder and execute any of the .py files. To use your own date structure it in this format:
 BlockId, #Hash, #date&time, #input_count, #output_count, #output_total(in BTC), #Output_total(in USD),  #Output_fee(in BTC), #Output_fee * 10000(in USD), #Size (in bytes).
